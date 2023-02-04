@@ -1,8 +1,11 @@
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-dotenv.config()
+import passportLocalMongoose from 'passport-local-mongoose'
+import findOrCreate from 'mongoose-findorcreate'
 
+dotenv.config()
 mongoose.set('strictQuery', true)
+//mongoose.set("useCreateIndex", true);
 
 async function dbClose() {
     await mongoose.connection.close()
@@ -22,7 +25,9 @@ catch (err) {
 // U S E R
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
-    password: { type: String, required: true}
+    name: { type: String, required: true },
+    googleId: { type: String, required: true },
+    secret: { type: String, required: true }
 })
 
 
@@ -70,6 +75,11 @@ const subjectSchema = new mongoose.Schema({
 const QuizModel = mongoose.model('Quiz', quizSchema)
 const SubjectModel = mongoose.model('Subject', subjectSchema)
 const FlashcardModel = mongoose.model('Flashcard', flashcardSchema)
+
+
+userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(findOrCreate);
+
 const UserModel = mongoose.model('User', userSchema)
 
 export { QuizModel, FlashcardModel, SubjectModel, UserModel, dbClose }
