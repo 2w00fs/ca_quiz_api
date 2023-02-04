@@ -59,7 +59,7 @@ async function deleteAnswer(quizId, cardId, answerId){
 // If only a quizId is provided, all cards will be returned
 // If a flashcardId is provided in the body it will return only that card
 router.get('/:id', async (req, res) => {
-    const quizId = await req.params.id
+    const quizId = await req.params.quizId
     const { cardId = false } = await req.body
     res.send(await selectCards(quizId, cardId))
 })

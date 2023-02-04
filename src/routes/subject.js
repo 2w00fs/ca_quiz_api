@@ -8,12 +8,17 @@ router.get('/', async (req, res) => {
     res.send(await SubjectModel.find().select({name: 1, _id: 1}))
 })
 
+router.get('/:id', async (req, res) => {
+    const id = await req.params.id
+    res.send(await QuizModel.find({subjectID: id}).select({name: 1, _id: 1}))
+})
+
 // ADD NEW SUBJECT
 router.post('/new', async (req, res) => {
     try {
         // if no userId is entered this default one will be provided
-        const { userId = '63d21798e23e4990fd09255c', name, quiz = [] } = req.body
-        const newSubject = { userId: userId, name: name, quiz: quiz }
+        const { userId = '63d21798e23e4990fd09255c', subjectName, quiz = [] } = await req.body
+        const newSubject = { userId: userId, name: subjectName, quiz: quiz }
 
         const insertSubject = await SubjectModel.create(newSubject)
         // 3. Send the new entry with 201 status
