@@ -39,9 +39,8 @@ async function updateAnswer(quizId, cardId, answerId, update){
 // If only a quizId is provided, all cards will be returned
 // If a flashcardId is provided in the body it will return only that card
 router.get('/:quizId/flashcard/:flashcardId', async (req, res) => {
-    const quizId = await req.params.id
-    const { cardId = false } = await req.body
-    res.send(await selectCards(quizId, cardId))
+    const { quizId, flashcardId } = req.params
+    res.send(await selectCards(quizId, flashcardId))
 })
 
 

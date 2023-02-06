@@ -50,21 +50,6 @@ router.get('/quiz/:quizId', async (req, res) => {
 
 
 // Create quiz
-/*
-summary: "Create a new quiz",
-description: "",
-requestSchema:
-    params:
-        subjectId:
-            description: "Subject ID",
-            required: true
-        quizName:
-            description: "New name for the quiz",
-            required: true
-        flashcards:
-            description: "Object containing flashcard values",
-            required: false
- */
 router.post('/subject/:subjectId/quiz', async (req, res) => {
     try {
         // if no userId is entered this default one will be provided
@@ -80,37 +65,6 @@ router.post('/subject/:subjectId/quiz', async (req, res) => {
     }
 })
 
-
-// Update quiz with new card/s
-/*
-summary: "Update a quiz",
-description: "Updates quiz with one or many flashcards, quiz name can also be changed",
-requestSchema:
-    params:
-        subjectId:
-            description: "Subject ID",
-            required: true
-        quizName:
-            description: "New name for the quiz",
-            required: true
-        flashcard:
-            description: "Object containing flashcard values", required: false,
-            innerSchema:
-                params:
-                    question: String, required: true,
-                    answerOptions: [{}], required: true
-                        innerSchema:
-                            text: String, required: true,
-                            isCorrectOption: Boolean, required: true
- */
-/*
-NOTES:
-Functionality is similar to /new, however updateOne doesn't return the update entry,
-on successful completion it returns an object containing 'acknowledged', which is a Bool and is true when successful.
-Another call is then made to the DB for the updated Quiz.
-The method used in card.js updateAnswer() could probably be used to update the quiz in a simpler way
-TODO: simplify this methods operation
- */
 router.put('/quiz/:quizId', async (req, res) => {
     try {
         const { quizId } = req.params

@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node api_server.js",
     "seed": "node dev/seed.js",
-    "test": "echo \\\"Error: no dev/test specified\\\" && exit 1"
+    "test": "nope"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -23,5 +23,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.4.1",
+    "supertest": "^6.3.3"
+  }
 }
