@@ -1,0 +1,724 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+	"title" : "CA QUIZ",
+	"description" : "Middleware between front end React app and Mongo database",
+	"version" : "0.1.9"
+  },
+  "servers" : [ {
+	"url" : "http://127.0.0.1:4001/",
+	"description" : "Optional server description, e.g. Main (production) server"
+  }, {
+	"url" : "http://127.0.0.1:4001/",
+	"description" : "Optional server description, e.g. Internal staging server for testing"
+  } ],
+  "components" : {
+	"schemas" : {
+	  "ArrayOfQuiz" : {
+		"type" : "array",
+		"items" : {
+		  "type" : "object",
+		  "properties" : {
+			"_id" : {
+			  "type" : "string",
+			  "example" : "63e07261b68e4e29cecd05a9"
+			},
+			"name" : {
+			  "type" : "string",
+			  "example" : "Quiz One"
+			},
+			"subjectId" : {
+			  "type" : "string",
+			  "example" : "63e07261b68e4e29cecd05a4"
+			},
+			"flashcards" : {
+			  "type" : "array",
+			  "items" : {
+				"type" : "object",
+				"properties" : {
+				  "question" : {
+					"type" : "string",
+					"example" : "How do you say good afternoon in German?"
+				  },
+				  "answerOptions" : {
+					"type" : "array",
+					"items" : {
+					  "type" : "object",
+					  "properties" : {
+						"text" : {
+						  "type" : "string",
+						  "example" : "Guten Morgen"
+						},
+						"isCorrectOption" : {
+						  "type" : "boolean"
+						},
+						"_id" : {
+						  "type" : "string",
+						  "example" : "63e07261b68e4e29cecd05b0"
+						}
+					  }
+					}
+				  }
+				}
+			  }
+			}
+		  }
+		}
+	  },
+	  "SingleQuiz" : {
+		"type" : "object",
+		"properties" : {
+		  "_id" : {
+			"type" : "string",
+			"example" : "63e07261b68e4e29cecd05a9"
+		  },
+		  "name" : {
+			"type" : "string",
+			"example" : "Quiz One"
+		  },
+		  "subjectId" : {
+			"type" : "string",
+			"example" : "63e07261b68e4e29cecd05a4"
+		  },
+		  "flashcards" : {
+			"type" : "array",
+			"items" : {
+			  "type" : "object",
+			  "properties" : {
+				"question" : {
+				  "type" : "string",
+				  "example" : "How do you say good afternoon in German?"
+				},
+				"answerOptions" : {
+				  "type" : "array",
+				  "items" : {
+					"type" : "object",
+					"properties" : {
+					  "text" : {
+						"type" : "string",
+						"example" : "Guten Morgen"
+					  },
+					  "isCorrectOption" : {
+						"type" : "boolean"
+					  },
+					  "_id" : {
+						"type" : "string",
+						"example" : "63e07261b68e4e29cecd05b0"
+					  }
+					}
+				  }
+				}
+			  }
+			}
+		  }
+		}
+	  },
+	  "SingleFlashcard" : {
+		"type" : "object",
+		"properties" : {
+		  "question" : {
+			"type" : "string",
+			"example" : "Who am I"
+		  },
+		  "takesTextInput" : {
+			"type" : "boolean"
+		  },
+		  "_id" : {
+			"type" : "string",
+			"example" : "63e07261b68e4e29cecd05b0"
+		  },
+		  "answerOptions" : {
+			"type" : "array",
+			"items" : {
+			  "type" : "object",
+			  "properties" : {
+				"text" : {
+				  "type" : "string",
+				  "example" : "Answer 1"
+				},
+				"isCorrectOption" : {
+				  "type" : "boolean"
+				},
+				"_id" : {
+				  "type" : "string",
+				  "example" : "63d32c268c96d7a5042afc65"
+				}
+			  }
+			}
+		  }
+		}
+	  },
+	  "SubjectOverview" : {
+		"type" : "object",
+		"properties" : {
+		  "_id" : {
+			"type" : "string",
+			"example" : "63d218149f6c29f31d5a50b1"
+		  },
+		  "userId" : {
+			"type" : "string",
+			"example" : "63e07261b68e4e29cecd05a2"
+		  },
+		  "name" : {
+			"type" : "string",
+			"example" : "Popular Quotes on Fridge Magnets"
+		  }
+		}
+	  }
+	},
+	"securitySchemes" : {
+	  "BearerAuth" : {
+		"type" : "http",
+		"scheme" : "bearer"
+	  }
+	},
+	"parameters" : {
+	  "quizIdParam" : {
+		"name" : "quizId",
+		"in" : "path",
+		"required" : true,
+		"description" : "empty",
+		"schema" : {
+		  "type" : "string",
+		  "example" : "63e07261b68e4e29cecd05a9"
+		}
+	  },
+	  "flashcardIdParam" : {
+		"name" : "flashcardId",
+		"in" : "path",
+		"required" : true,
+		"description" : "empty",
+		"schema" : {
+		  "type" : "string",
+		  "example" : "63e07261b68e4e29cecd05af"
+		}
+	  },
+	  "subjectIdParam" : {
+		"name" : "subjectId",
+		"in" : "path",
+		"required" : true,
+		"description" : "empty",
+		"schema" : {
+		  "type" : "string",
+		  "example" : "63e07261b68e4e29cecd05a4"
+		}
+	  }
+	}
+  },
+  "paths" : {
+	"/quiz" : {
+	  "get" : {
+		"description" : "Retrieve all available quizzes",
+		"responses" : {
+		  "200" : {
+			"description" : "A JSON array of quizzes",
+			"content" : {
+			  "application/json" : {
+				"schema" : {
+				  "$ref" : "#/components/schemas/ArrayOfQuiz"
+				}
+			  }
+			}
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  }
+	},
+	"/quiz/{quizId}" : {
+	  "get" : {
+		"description" : "Select a quiz by its ID",
+		"parameters" : [ {
+		  "$ref" : "#/components/parameters/quizIdParam"
+		} ],
+		"responses" : {
+		  "200" : {
+			"description" : "A JSON object containing quiz details",
+			"content" : {
+			  "application/json" : {
+				"schema" : {
+				  "$ref" : "#/components/schemas/SingleQuiz"
+				}
+			  }
+			}
+		  },
+		  "404" : {
+			"description" : "Quiz does not exist"
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  },
+	  "put" : {
+		"description" : "Rename a quiz",
+		"parameters" : [ {
+		  "name" : "quizId",
+		  "in" : "path",
+		  "required" : true,
+		  "description" : "The ID of the quiz to return",
+		  "schema" : {
+			"type" : "string",
+			"example" : "63e07261b68e4e29cecd05a4"
+		  }
+		} ],
+		"responses" : {
+		  "200" : {
+			"description" : "A JSON array of quizzes",
+			"content" : {
+			  "application/json" : {
+				"schema" : {
+				  "$ref" : "#/components/schemas/SingleQuiz"
+				}
+			  }
+			}
+		  },
+		  "404" : {
+			"description" : "Quiz does not exist"
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  },
+	  "delete" : {
+		"description" : "Delete a quiz and all its flashcards",
+		"parameters" : [ {
+		  "name" : "quizId",
+		  "in" : "path",
+		  "required" : true,
+		  "description" : "The ID of the quiz to return",
+		  "schema" : {
+			"type" : "string",
+			"example" : "63e07261b68e4e29cecd05a4"
+		  }
+		} ],
+		"responses" : {
+		  "204" : {
+			"description" : "Successful Deletion"
+		  },
+		  "404" : {
+			"description" : "Quiz does not exist"
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  }
+	},
+	"/quiz/{quizId}/flashcard/{flashcardId}" : {
+	  "get" : {
+		"description" : "Retrieve a flashcard by its ID",
+		"parameters" : [ {
+		  "$ref" : "#/components/parameters/quizIdParam"
+		}, {
+		  "$ref" : "#/components/parameters/flashcardIdParam"
+		} ],
+		"responses" : {
+		  "200" : {
+			"description" : "empty",
+			"content" : {
+			  "application/json" : {
+				"schema" : {
+				  "$ref" : "#/components/schemas/SingleFlashcard"
+				}
+			  }
+			}
+		  },
+		  "404" : {
+			"description" : "Flashcard does not exist"
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  },
+	  "put" : {
+		"parameters" : [ {
+		  "$ref" : "#/components/parameters/quizIdParam"
+		}, {
+		  "$ref" : "#/components/parameters/flashcardIdParam"
+		} ],
+		"requestBody" : {
+		  "required" : true,
+		  "content" : {
+			"application/json" : {
+			  "schema" : {
+				"type" : "object",
+				"properties" : {
+				  "question" : {
+					"type" : "string",
+					"example" : "How do you say good afternoon in German?"
+				  },
+				  "answerOptions" : {
+					"type" : "array",
+					"items" : {
+					  "type" : "object",
+					  "properties" : {
+						"text" : {
+						  "type" : "string",
+						  "example" : "Answer 1"
+						},
+						"isCorrectOption" : {
+						  "type" : "boolean"
+						}
+					  }
+					}
+				  },
+				  "takesTextInput" : {
+					"type" : "boolean"
+				  }
+				}
+			  }
+			}
+		  }
+		},
+		"responses" : {
+		  "200" : {
+			"description" : "Modify a flashcard",
+			"content" : {
+			  "application/json" : {
+				"schema" : {
+				  "$ref" : "#/components/schemas/SingleQuiz"
+				}
+			  }
+			}
+		  },
+		  "404" : {
+			"description" : "Quiz does not exist"
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  },
+	  "delete" : {
+		"description" : "Delete a flashcard from the quiz",
+		"parameters" : [ {
+		  "$ref" : "#/components/parameters/quizIdParam"
+		}, {
+		  "$ref" : "#/components/parameters/flashcardIdParam"
+		} ],
+		"responses" : {
+		  "204" : {
+			"description" : "empty"
+		  },
+		  "404" : {
+			"description" : "Quiz does not exist"
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  }
+	},
+	"/subject" : {
+	  "get" : {
+		"summary" : "Returns a list of all available subjects.",
+		"security" : [ {
+		  "BearerAuth" : [ "userId" ]
+		} ],
+		"responses" : {
+		  "200" : {
+			"description" : "A JSON array of subjects",
+			"content" : {
+			  "application/json" : {
+				"schema" : {
+				  "type" : "array",
+				  "items" : {
+					"$ref" : "#/components/schemas/SubjectOverview"
+				  }
+				}
+			  }
+			}
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  },
+	  "post" : {
+		"description" : "Create a new subject",
+		"security" : [ {
+		  "BearerAuth" : [ "userId" ]
+		} ],
+		"requestBody" : {
+		  "required" : true,
+		  "content" : {
+			"application/json" : {
+			  "schema" : {
+				"type" : "object",
+				"properties" : {
+				  "name" : {
+					"type" : "string",
+					"example" : "New Subject Name"
+				  }
+				}
+			  }
+			}
+		  }
+		},
+		"responses" : {
+		  "201" : {
+			"description" : "A JSON object with new subject name and ID",
+			"content" : {
+			  "application/json" : {
+				"schema" : {
+				  "type" : "object",
+				  "properties" : {
+					"userId" : {
+					  "type" : "string",
+					  "example" : "63e07261b68e4e29cecd05a2"
+					},
+					"name" : {
+					  "type" : "string",
+					  "example" : "New Subject"
+					},
+					"_id" : {
+					  "type" : "string",
+					  "example" : "63e0b170af5473b28152ab81"
+					},
+					"id" : {
+					  "type" : "string",
+					  "example" : "63e0b170af5473b28152ab81"
+					}
+				  }
+				}
+			  }
+			}
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  }
+	},
+	"/subject/{subjectId}" : {
+	  "get" : {
+		"description" : "Returns a list of all available subjects.",
+		"parameters" : [ {
+		  "$ref" : "#/components/parameters/subjectIdParam"
+		} ],
+		"responses" : {
+		  "200" : {
+			"description" : "A JSON array of subjects",
+			"content" : {
+			  "application/json" : {
+				"schema" : {
+				  "type" : "array",
+				  "items" : {
+					"$ref" : "#/components/schemas/SubjectOverview"
+				  }
+				}
+			  }
+			}
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  },
+	  "put" : {
+		"description" : "Updates the name of the subject",
+		"parameters" : [ {
+		  "$ref" : "#/components/parameters/subjectIdParam"
+		} ],
+		"requestBody" : {
+		  "required" : true,
+		  "content" : {
+			"application/json" : {
+			  "schema" : {
+				"type" : "object",
+				"properties" : {
+				  "name" : {
+					"type" : "string",
+					"example" : "Updated Subject Name"
+				  }
+				}
+			  }
+			}
+		  }
+		},
+		"responses" : {
+		  "200" : {
+			"description" : "A JSON array of subjects",
+			"content" : {
+			  "application/json" : {
+				"schema" : {
+				  "type" : "array",
+				  "items" : {
+					"$ref" : "#/components/schemas/SubjectOverview"
+				  }
+				}
+			  }
+			}
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  },
+	  "delete" : {
+		"description" : "Deletes a subject and all its quizzes",
+		"parameters" : [ {
+		  "$ref" : "#/components/parameters/subjectIdParam"
+		} ],
+		"responses" : {
+		  "204" : {
+			"description" : "Successfully deleted subject"
+		  },
+		  "404" : {
+			"description" : "Subject Not Found"
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  }
+	},
+	"/subject/{subjectId}/quiz" : {
+	  "post" : {
+		"summary" : "creates empty quiz",
+		"parameters" : [ {
+		  "$ref" : "#/components/parameters/subjectIdParam"
+		} ],
+		"requestBody" : {
+		  "required" : true,
+		  "content" : {
+			"application/json" : {
+			  "schema" : {
+				"type" : "object",
+				"properties" : {
+				  "name" : {
+					"type" : "string",
+					"example" : "New Quiz Name"
+				  }
+				}
+			  }
+			}
+		  }
+		},
+		"responses" : {
+		  "201" : {
+			"description" : "Successful creation of a new quiz",
+			"content" : {
+			  "application/json" : {
+				"schema" : {
+				  "$ref" : "#/components/schemas/SubjectOverview"
+				}
+			  }
+			}
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  }
+	},
+	"/auth/signup" : {
+	  "post" : {
+		"description" : "Create a new user to authenticate with",
+		"requestBody" : {
+		  "required" : true,
+		  "content" : {
+			"application/json" : {
+			  "schema" : {
+				"type" : "object",
+				"properties" : {
+				  "username" : {
+					"type" : "string",
+					"example" : "user"
+				  },
+				  "password" : {
+					"type" : "string",
+					"example" : "password"
+				  }
+				}
+			  }
+			}
+		  }
+		},
+		"responses" : {
+		  "200" : {
+			"description" : "empty",
+			"content" : {
+			  "application/json" : {
+				"schema" : {
+				  "type" : "object",
+				  "properties" : {
+					"jwtToken" : {
+					  "type" : "string"
+					},
+					"userId" : {
+					  "type" : "string",
+					  "example" : "63e07261b68e4e29cecd05a2"
+					}
+				  }
+				}
+			  }
+			}
+		  },
+		  "400" : {
+			"description" : "Username already exists"
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  }
+	},
+	"/auth/login" : {
+	  "post" : {
+		"description" : "Retrieve JWT to login to account",
+		"requestBody" : {
+		  "required" : true,
+		  "content" : {
+			"application/json" : {
+			  "schema" : {
+				"type" : "object",
+				"properties" : {
+				  "username" : {
+					"type" : "string",
+					"example" : "user"
+				  },
+				  "password" : {
+					"type" : "string",
+					"example" : "password"
+				  }
+				}
+			  }
+			}
+		  }
+		},
+		"responses" : {
+		  "200" : {
+			"description" : "empty",
+			"content" : {
+			  "application/json" : {
+				"schema" : {
+				  "type" : "object",
+				  "properties" : {
+					"jwtToken" : {
+					  "type" : "string"
+					},
+					"userId" : {
+					  "type" : "string",
+					  "example" : "63e07261b68e4e29cecd05a2"
+					}
+				  }
+				}
+			  }
+			}
+		  },
+		  "400" : {
+			"description" : "Username or password is incorrect"
+		  },
+		  "500" : {
+			"description" : "Server Error"
+		  }
+		}
+	  }
+	}
+  }
+}
