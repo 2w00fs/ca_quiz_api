@@ -1,11 +1,8 @@
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import passportLocalMongoose from 'passport-local-mongoose'
-import findOrCreate from 'mongoose-findorcreate'
-
 dotenv.config()
+
 mongoose.set('strictQuery', true)
-//mongoose.set("useCreateIndex", true);
 
 async function dbClose() {
     await mongoose.connection.close()
@@ -24,10 +21,8 @@ catch (err) {
 
 // U S E R
 const userSchema = new mongoose.Schema({
-    username: { type: String, required: true },
-    name: { type: String, required: true },
-    googleId: { type: String, required: true },
-    secret: { type: String, required: true }
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true}
 })
 
 
@@ -56,13 +51,14 @@ const flashcardSchema = new mongoose.Schema({
     answerOptions: [{
         text: { type: String, required: true },
         isCorrectOption: { type: Boolean, required: true}
-    }]
+    }],
+    takesTextInput: { type: Boolean }
 })
 
 // Q U I Z
 const quizSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    subjectID: { type: mongoose.ObjectId, ref: 'Subject'},
+    subjectId: { type: mongoose.ObjectId, ref: 'Subject'},
     flashcards: [ flashcardSchema ]
 })
 
@@ -72,14 +68,18 @@ const subjectSchema = new mongoose.Schema({
     name: { type: String, required: true },
 })
 
+subjectSchema.virtual('quizCount', {
+    ref: 'Quiz',
+    localField: '_id',
+    foreignField: 'subjectId',
+    count: true
+})
+
+subjectSchema.set('toObject', { virtuals: true })
+subjectSchema.set('toJSON', { virtuals: true })
+
 const QuizModel = mongoose.model('Quiz', quizSchema)
 const SubjectModel = mongoose.model('Subject', subjectSchema)
-const FlashcardModel = mongoose.model('Flashcard', flashcardSchema)
-
-
-userSchema.plugin(passportLocalMongoose);
-userSchema.plugin(findOrCreate);
-
 const UserModel = mongoose.model('User', userSchema)
 
-export { QuizModel, FlashcardModel, SubjectModel, UserModel, dbClose }
+export { QuizModel, SubjectModel, UserModel, dbClose }
